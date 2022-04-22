@@ -1,0 +1,3 @@
+* Detect if minesweeper solved/failed with ip (?)
+* Redirect www.itzlarz.dev --> itzlarz.dev
+* Whatsapp fix

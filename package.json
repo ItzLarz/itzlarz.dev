@@ -1,0 +1,24 @@
+{
+  "name": "minesweeper",
+  "version": "1.0.0",
+  "description": "MineSweeper made in JavaScript with p5.js",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^3.2.3",
+    "express": "^4.17.3",
+    "geoip-lite": "^1.4.2",
+    "http": "^0.0.1-security",
+    "https": "^1.0.0",
+    "js": "^0.1.0",
+    "path": "^0.12.7",
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.16.2"
+  },
+  "keywords": []
+}

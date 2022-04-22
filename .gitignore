@@ -1,7 +1,7 @@
 node_modules
 IPAdresses.txt
-*@*
-*+*
+*test*
+
 .DS_Store
 applet
 application.linux-arm64

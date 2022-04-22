@@ -1,4 +1,5 @@
 const express = require("express");
+const subdomain = require("express-subdomain");
 const path = require("path");
 const fs = require("fs");
 const https = require("https");
@@ -6,7 +7,9 @@ const http = require("http");
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const geoip = require("geoip-lite");
+
 const app = express();
+const router = express.Router();
 const port = process.env.PORT || 8080;
 const chatId = "120363021123562891@g.us";
 
@@ -77,6 +80,13 @@ var useBlacklist = true;
 var useWhitelist = false;
 var useNLOnly = true;
 
+
+router.get("/", function(req, res) {
+	res.send("test");
+});
+
+app.use(subdomain("api", router));
+
 app.use(express.static("scripts"));
 app.use(express.static("libraries"));
 app.use(express.static("img"));
@@ -86,38 +96,39 @@ app.set("trust proxy", true);
 
 app.get("/", async (req, res) => {
 	var ip = getClientIp(req);
+	if (ip != "84.105.26.25"){
+		try {
+			var ipFile = fs.openSync("./IPAdresses.txt", "r");
+	        var data = fs.readFileSync(ipFile, "utf8");
 
-	try {
-		var ipFile = fs.openSync("./IPAdresses.txt", "r");
-        var data = fs.readFileSync(ipFile, "utf8");
-
-   		if (data.includes(ip)) {
-   			// await client.sendMessage(chatId, "Client with ip " + ip + " accessed the server (old connection) (country: " + geoip.lookup(ip).country + ")");
-   			// await client.markChatUnread(chatId);
-   		}
-     		
-		else {
-			// await client.sendMessage(chatId, "Client with ip " + ip + " accessed the server (new connection) (country: " + geoip.lookup(ip).country + ")");
-			// await client.markChatUnread(chatId);
+	   		if (data.includes(ip)) {
+	   			// await client.sendMessage(chatId, "Client with ip " + ip + " accessed the server (old connection) (country: " + geoip.lookup(ip).country + ")");
+	   			// await client.markChatUnread(chatId);
+	   		}
+	     		
+			else {
+				// await client.sendMessage(chatId, "Client with ip " + ip + " accessed the server (new connection) (country: " + geoip.lookup(ip).country + ")");
+				// await client.markChatUnread(chatId);
+			}
+	        		
+	        	
+	       	fs.closeSync(ipFile);
+	       	
+	  		ipFile = fs.openSync("./IPAdresses.txt", "a");
+	  		fs.appendFileSync(ipFile, ip + " - " + new Date() + " - " + JSON.stringify(geoip.lookup(ip))  + "\n", "utf8");
+	       		
 		}
-        		
-        	
-       	fs.closeSync(ipFile);
-       	if (ip != "84.105.26.25"){
-       		ipFile = fs.openSync("./IPAdresses.txt", "a");
-       		fs.appendFileSync(ipFile, ip + " - " + new Date() + " - " + JSON.stringify(geoip.lookup(ip))  + "\n", "utf8");
-       	}	
-	}
 
-	catch(err) {
-		// await client.sendMessage(chatId, err);
-		// await client.markChatUnread(chatId);
-		// console.log(err);
-	}
+		catch(err) {
+			// await client.sendMessage(chatId, err);
+			// await client.markChatUnread(chatId);
+			// console.log(err);
+		}
 
-	finally {
-		if (ipFile !== undefined) {
-			fs.closeSync(ipFile);
+		finally {
+			if (ipFile !== undefined) {
+				fs.closeSync(ipFile);
+			}
 		}
 	}
 	
@@ -193,6 +204,8 @@ var getClientIp = function(req) {
 // });
 // 
 // client.initialize();
+
+
 
 https.createServer(serverOptions, app).listen(port, () => {
 	console.log(`Server listening on port ${port}, with DNS https://itzlarz.dev`);

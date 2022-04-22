@@ -12,6 +12,7 @@
   "dependencies": {
     "async": "^3.2.3",
     "express": "^4.17.3",
+    "express-subdomain": "^1.0.5",
     "geoip-lite": "^1.4.2",
     "http": "^0.0.1-security",
     "https": "^1.0.0",

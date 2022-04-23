@@ -138,8 +138,8 @@ function draw() {
 
 function init() {
   // Resetting the variables
-  if (bombs > (round((rows * columns) / 3.5)/5)*5)) {
-  	bombs = round((rows * columns) / 3.5)/5)*5;
+  if (bombs > (round(((rows * columns)/3.5)/5)*5)) {
+  	bombs = round(((rows * columns)/3.5)/5)*5;
   }
 
   edgeSize = columns * rows / 40;
@@ -204,7 +204,7 @@ function settingsScreen() {
 
   // Variable slider number of bombs
   text("Number of Bombs: " + bombs, 30, 150);
-  bombSlider = createSlider(0, round((rows * columns) / 3.5)/5)*5, bombs, 5)
+  bombSlider = createSlider(0, round(((rows * columns)/3.5)/5)*5, bombs, 5)
   bombSlider.class("slider");
   bombSlider.position(540, 120);
   bombSlider.changed(sliderChange);

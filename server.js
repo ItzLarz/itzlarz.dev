@@ -1,4 +1,4 @@
-\// Importing all required dependencies
+// Importing all required dependencies
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
@@ -35,7 +35,7 @@ const serverOptions = {
 var port = process.env.PORT || 8080; // Port to create server on
 var chatId = "120363021123562891@g.us"; // Whatsapp Chat ID
 var closed = false; // Close site
-var useWwebjs = true; // Debug mode
+var useWwebjs = false; // Debug mode
 var useBlacklist = false; // Use IP Blacklist
 var useWhitelist = false; // Use IP Whitelist
 var useNLOnly = false; // Use NL IP only mode

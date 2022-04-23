@@ -1,4 +1,4 @@
-// No context menu on right click
+// Withhold context menu on right click
 document.oncontextmenu = function () {
   return false;
 };
@@ -106,7 +106,7 @@ function setup() {
 }
 
 function draw() {
-  // Making game counter
+  // Creating timer
   if (!gameOver && !homeScreenState && gamePlaying) {
     if (millis() - interval >= 1000) {
       interval = millis();
@@ -138,9 +138,10 @@ function draw() {
 
 function init() {
   // Resetting the variables
-  if (bombs > (columns * rows)) {
-    bombs = floor(columns * rows);
+  if (bombs > (round((rows * columns) / 3.5)/5)*5)) {
+  	bombs = round((rows * columns) / 3.5)/5)*5;
   }
+
   edgeSize = columns * rows / 40;
   if (edgeSize < 10) {
     edgeSize = 10;
@@ -167,17 +168,17 @@ function init() {
   calcValue();
   drawBorders();
 
-  // Printing the field for cheating ;)
+  // Printing the field in the console for cheating ;)
   console.log(squares);
 }
 
 function homeScreen() {
-  // Home Screen
+  // Home screen
   resizeCanvas(1600, 850);
   background(100);
   image(stock, 0, 0, 1600, 850);
 
-  // Play button
+  // Playbutton
   imageMode(CENTER);
   image(play, 800, 425, 150, 150);
 
@@ -201,31 +202,30 @@ function settingsScreen() {
   fill(0);
   strokeWeight(1);
 
-  // Variable number of bombs
+  // Variable slider number of bombs
   text("Number of Bombs: " + bombs, 30, 150);
-  bombSlider = createSlider(0, rows * columns, bombs, 5)
+  bombSlider = createSlider(0, round((rows * columns) / 3.5)/5)*5, bombs, 5)
   bombSlider.class("slider");
   bombSlider.position(540, 120);
   bombSlider.changed(sliderChange);
 
-  // Variable number of rows
+  // Variable slidedr number of rows
   text("Number of Rows: " + rows, 30, 240);
-  rowSlider = createSlider(5, 35, rows, 5)
+  rowSlider = createSlider(15, 35, rows, 5)
   rowSlider.class("slider");
   rowSlider.position(540, 210);
   rowSlider.changed(sliderChange);
 
-  // Variable number of columns
+  // Variable slider number of columns
   text("Number of Columns: " + columns, 30, 330);
-  columnSlider = createSlider(10, 70, columns, 5)
+  columnSlider = createSlider(30, 70, columns, 5)
   columnSlider.class("slider");
   columnSlider.position(540, 300);
   columnSlider.changed(sliderChange);
 }
 
 function creditsScreen() {
-  // Credits Screen
-
+  // Credits screen
   imageMode(CORNER);
   image(stock, 0, 0, 1600, 850);
   image(homeButton, 1480, 730, 100, 100);
@@ -250,11 +250,10 @@ function creditsScreen() {
 }
 
 function gameOverScreen() {
-  // Game Over Screen
+  // Game over screen
 
   if (defeat) {
-    // If you lose 
-
+    // If player lost 
     fill(200);
     stroke(170);
     strokeWeight(5);
@@ -270,8 +269,7 @@ function gameOverScreen() {
   }
 
   if (win) {
-    // If you win
-
+    // If player won
     fill(200);
     stroke(170);
     strokeWeight(5);
@@ -313,6 +311,7 @@ function selectBombs() {
   while (bombList.length < bombs) {
     let pickedLine = random(squares);
     let pickedSquare = random(pickedLine);
+    // Stopping a square from having two bombs
     if (pickedSquare.bomb != true) {
       bombList.push(pickedSquare);
       pickedSquare.bomb = true;
@@ -400,12 +399,13 @@ function calcValue() {
         if (squares[i - 1][j - 1].bomb == true) { countBombs++; }
         if (squares[i][j - 1].bomb == true) { countBombs++; }
         if (squares[i + 1][j - 1].bomb == true) { countBombs++; }
-
         if (squares[i + 1][j].bomb == true) { countBombs++; }
         if (squares[i + 1][j + 1].bomb == true) { countBombs++; }
         if (squares[i][j + 1].bomb == true) { countBombs++; }
         if (squares[i - 1][j + 1].bomb == true) { countBombs++; }
       }
+
+      // Setting the value of the square
       squares[i][j].value = countBombs;
     }
   }
@@ -469,8 +469,8 @@ function toggleMusic() {
 
 function skipMusic(direction) {
   // Skip to next or previous song
-
   song.stop();
+
   if (direction == "next") {
     if (songNum == 4) {
       songNum = 0

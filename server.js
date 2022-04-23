@@ -32,13 +32,13 @@ const serverOptions = {
 }
 
 // Declaring variables
-var port = process.env.PORT || 8080;
-var chatId = "120363021123562891@g.us";
-var closed = false;
-var useWwebjs = true;
-var useBlacklist = false;
-var useWhitelist = false;
-var useNLOnly = false;
+var port = process.env.PORT || 8080; // Port to create server on
+var chatId = "120363021123562891@g.us"; // Whatsapp Chat ID
+var closed = false; // Close site
+var useWwebjs = false; // Debug mode
+var useBlacklist = false; // Use IP Blacklist
+var useWhitelist = false; // Use IP Whitelist
+var useNLOnly = false; // Use NL IP only mode
 
 // IP Blacklist for server
 var ipBlacklist = [
@@ -51,7 +51,6 @@ var ipWhitelist = [
 	"84.105.26.25"
 ];
 
-// app.set("trust proxy", true);
 // Stating which directories to use
 app.use(express.static("scripts"));
 app.use(express.static("libraries"));
@@ -80,20 +79,19 @@ app.use(async (req, res, next) => {
 		   			await client.markChatUnread(chatId);
 	   			}
 	   		}
-	     		
+
 			else {
 				if (useWwebjs) {
 					await client.sendMessage(chatId, "Client with ip " + ip + " accessed the server (new connection) (country: " + geoip.lookup(ip).country + ")");
 					await client.markChatUnread(chatId);
 				}
 			}
-	        		
-	        	
+
+
 	       	fs.closeSync(ipFile);
-	       	
+
 	  		ipFile = fs.openSync("./IP-Log.txt", "a");
 	  		fs.appendFileSync(ipFile, ip + " - " + new Date() + " - " + JSON.stringify(geoip.lookup(ip))  + "\n", "utf8");
-	       		
 		}
 
 		catch(err) {
@@ -116,7 +114,7 @@ app.use(async (req, res, next) => {
 	return next();
 });
 
-// Choosing what to send to Client based on IP-Adress
+// Choosing what to send to client based on IP-Adress
 app.get("/", async (req, res) => {
 	var ip = getClientIp(req);
 	if (useBlacklist) {
@@ -136,10 +134,10 @@ app.get("/", async (req, res) => {
 	if (useWhitelist) {
 		var through = false;
 		for (var i = 0; i < ipWhitelist.length; i++){
-			if (ip.startsWith(ipWhitelist[i])) { 
+			if (ip.startsWith(ipWhitelist[i])) {
 				through = true;
-				break; 
-			}	
+				break;
+			}
 		}
 
 		if (!through) {
@@ -176,7 +174,7 @@ app.get("/", async (req, res) => {
 	}
 });
 
-// Getting the IP of the Client
+// Getting the IP of the client
 var getClientIp = function(req) {
 	var ip = req.headers["x-real-ip"]
 		|| req.connection.remoteAddress
@@ -195,7 +193,7 @@ if (useWwebjs) {
 	    qrcode.generate(qr, {small: true});
 	});
 
-	// When the wwebjs Client is ready
+	// When the wwebjs client is ready
 	client.on("ready", async () => {
 		await client.sendMessage(chatId,"Whatsapp-webjs client is ready");
 
@@ -205,7 +203,7 @@ if (useWwebjs) {
 		});
 	});
 
-	// Initializing the wwebjs Client
+	// Initializing the wwebjs client
 	client.initialize();
 }
 

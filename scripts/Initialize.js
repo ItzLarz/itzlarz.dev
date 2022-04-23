@@ -3,7 +3,7 @@ document.oncontextmenu = function () {
   return false;
 };
 
-// Creating all variables
+// Declaring all variables
 const boxSize = 30;
 var bombs = 90;
 var rows = 20;
@@ -95,6 +95,7 @@ function preload() {
   music.push(loadSound("music3.mp3"));
   music.push(loadSound("music4.mp3"));
   music.push(loadSound("music5.mp3"));
+  outputVolume(0.2);
 
 }
 

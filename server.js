@@ -36,10 +36,10 @@ const serverOptions = {
 var port = process.env.PORT || 8080;
 var chatId = "120363021123562891@g.us";
 var closed = false;
-var useWwebjs = false;
-var useBlacklist = true;
+var useWwebjs = true;
+var useBlacklist = false;
 var useWhitelist = false;
-var useNLOnly = true;
+var useNLOnly = false;
 
 // IP Blacklist for server
 var ipBlacklist = [
@@ -164,14 +164,16 @@ app.get("/", async (req, res) => {
 		}
 	}
 
-	 return res.sendFile(path.join(__dirname + "/index.html"));
-
 	if (closed) {
 		res.status(403).send("403 Forbidden" + `<br/>` + "Site Closed" + `<br/>` + new Date());
 		if (useWwebjs) {
 			await client.sendMessage(chatId, "Client with ip " + ip + " was kicked from the server (country: " + geoip.lookup(ip).country + ")");
 		}
 		return res.end();
+	}
+
+	else {
+		return res.sendFile(path.join(__dirname + "/index.html"));
 	}
 });
 

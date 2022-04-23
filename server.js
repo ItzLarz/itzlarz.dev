@@ -68,7 +68,7 @@ app.use((req, res, next) => {
 });
 
 // Adding the IP-Adress to log and alerting host
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
 	var ip = getClientIp(req);
 	if (ip != "84.105.26.25"){
 		try {

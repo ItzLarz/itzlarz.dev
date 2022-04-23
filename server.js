@@ -14,11 +14,12 @@ const port = process.env.PORT || 8080;
 const chatId = "120363021123562891@g.us";
 
 const client = new Client({
-        puppeteer: {
-                executablePath: "/usr/bin/chromium-browser",
-                args: ["--no-sandbox"]
-                },
-        authStrategy: new LocalAuth()
+	puppeteer:
+	{
+	    executablePath: "/usr/bin/chromium-browser",
+	    args: ["--no-sandbox"]
+	},
+	authStrategy: new LocalAuth()
 });
 
 const privateKey = fs.readFileSync("/etc/letsencrypt/live/itzlarz.dev/privkey.pem", "utf8");
@@ -80,21 +81,22 @@ var useBlacklist = true;
 var useWhitelist = false;
 var useNLOnly = true;
 
-
-router.get("/", function(req, res) {
-	res.send("test");
-});
-
-app.use(subdomain("api", router));
+app.set("trust proxy", true);
 
 app.use(express.static("scripts"));
 app.use(express.static("libraries"));
 app.use(express.static("img"));
 app.use(express.static("sound"));
 
-app.set("trust proxy", true);
+app.use((req, res, next) => {
+	console.log(req.subdomains);
+	if(req.subdomains != "") {
+		return res.redirect(301, "https://itzlarz.dev/")
+	}
+	return next();
+});
 
-app.get("/", async (req, res) => {
+app.use((req, res, next) => {
 	var ip = getClientIp(req);
 	if (ip != "84.105.26.25"){
 		try {
@@ -131,7 +133,11 @@ app.get("/", async (req, res) => {
 			}
 		}
 	}
-	
+	return next();
+});
+
+app.get("/", async (req, res) => {
+	var ip = getClientIp(req);
 	if (useBlacklist) {
 		for (var i = 0; i < ipBlacklist.length; i++){
 			if (!ip.startsWith(ipBlacklist[i])) { continue; }

@@ -35,7 +35,7 @@ const serverOptions = {
 var port = process.env.PORT || 8080; // Port to create server on
 var chatId = "120363021123562891@g.us"; // Whatsapp Chat ID
 var closed = false; // Close site
-var debugMode = true; // Turning off Whatsapp webjs messaging for faster debugging
+var debugMode = true; // Turning off wwebjs messaging for faster debugging
 var useBlacklist = false; // Use IP Blacklist
 var useWhitelist = false; // Use IP Whitelist
 var useNLOnly = false; // Use NL IP only mode
@@ -171,6 +171,46 @@ app.get("/", async (req, res) => {
 
 	else {
 		return res.sendFile(path.join(__dirname + "/index.html"));
+	}
+});
+
+// Send wwebjs message if 
+app.get("/gameOver", async (req, res) => {
+	var result = req.query.result;
+	var bombs = req.query.bombs;
+	var rows = req.query.rows;
+	var columns = req.query.columns;
+	
+	var ip = getClientIp(req);
+
+	if (!debugMode) {
+		if (result == "win") {
+			await client.sendMessage(chatId, "Alert: IP " + ip + " won the game with \n bombs = " + bombs + "\n rows = " + rows + "\n columns = " + columns);
+		}
+		
+		else if (result == "defeat") {
+			await client.sendMessage(chatId, "Alert: IP " + ip + " lost the game with \n bombs = " + bombs + "\n rows = " + rows + "\n columns = " + columns);
+		}
+
+		else {
+			await client.sendMessage(chatId, "Error: IP " + ip + " got the value: \"" + result + "\"" + " with \n bombs = " + bombs + "\n rows = " + rows + "\n columns = " + columns);	
+		}
+
+		await client.markChatUnread(chatId);
+	}
+
+	else if (debugMode) {
+		if (result == "win") {
+			console.log("Alert: IP " + ip + " won the game with \n bombs = " + bombs + "\n rows = " + rows + "\n columns = " + columns);
+		}
+		
+		else if (result == "defeat") {
+			console.log("Alert: IP " + ip + " lost the game with \n bombs = " + bombs + "\n rows = " + rows + "\n columns = " + columns);
+		}
+
+		else {
+			console.log("Error: IP " + ip + " got the value: \"" + result + "\"" + " with \n bombs = " + bombs + "\n rows = " + rows + "\n columns = " + columns);	
+		}
 	}
 });
 

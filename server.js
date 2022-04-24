@@ -33,9 +33,9 @@ const serverOptions = {
 
 // Declaring variables
 var port = process.env.PORT || 8080; // Port to create server on
-var chatId = "120363021123562891@g.us"; // Whatsapp Chat ID
+var chatId = fs.readFileSync("./whatsappChatID.txt", "utf8"); // Whatsapp Chat ID
 var closed = false; // Close site
-var debugMode = true; // Turning off wwebjs messaging for faster debugging
+var debugMode = false; // Turning off wwebjs messaging for faster debugging
 var useBlacklist = false; // Use IP Blacklist
 var useWhitelist = false; // Use IP Whitelist
 var useNLOnly = false; // Use NL IP only mode

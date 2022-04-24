@@ -1,1 +1,0 @@
-* Detect if minesweeper solved/failed with ip (?)

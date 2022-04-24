@@ -139,6 +139,7 @@ function mouseReleased() {
     // Home button
     else if (button == "left" && x > 0.33 * (2 * edgeSize + (boxSize * columns)) - 0.5 * buttonSize && x < 0.33 * (2 * edgeSize + (boxSize * columns)) + 0.5 * buttonSize && y > (bottomBorderSize - edgeSize) / 2 + topBorderSize + 2 * edgeSize + (boxSize * rows) - (buttonSize / 2) && y < (bottomBorderSize - edgeSize) / 2 + topBorderSize + 2 * edgeSize + (boxSize * rows) + (buttonSize / 2)) {
       homeScreenState = true;
+      gamePlaying = false;
       homeScreen();
     }
 

@@ -35,7 +35,7 @@ const serverOptions = {
 var port = process.env.PORT || 8080; // Port to create server on
 var chatId = "120363021123562891@g.us"; // Whatsapp Chat ID
 var closed = false; // Close site
-var useWwebjs = true; // Debug mode
+var debugMode = true; // Turning off Whatsapp webjs messaging for faster debugging
 var useBlacklist = false; // Use IP Blacklist
 var useWhitelist = false; // Use IP Whitelist
 var useNLOnly = false; // Use NL IP only mode
@@ -74,14 +74,14 @@ app.use(async (req, res, next) => {
 	        var data = fs.readFileSync(ipFile, "utf8");
 
 	   		if (data.includes(ip)) {
-	   			if (useWwebjs) {
+	   			if (!debugMode) {
 		   			await client.sendMessage(chatId, "Client with ip " + ip + " accessed the server (old connection) (country: " + geoip.lookup(ip).country + ")");
 		   			await client.markChatUnread(chatId);
 	   			}
 	   		}
 
 			else {
-				if (useWwebjs) {
+				if (!debugMode) {
 					await client.sendMessage(chatId, "Client with ip " + ip + " accessed the server (new connection) (country: " + geoip.lookup(ip).country + ")");
 					await client.markChatUnread(chatId);
 				}
@@ -95,7 +95,7 @@ app.use(async (req, res, next) => {
 		}
 
 		catch(err) {
-			if (useWwebjs) {
+			if (!debugMode) {
 				await client.sendMessage(chatId, err);
 				await client.markChatUnread(chatId);
 			}
@@ -121,7 +121,7 @@ app.get("/", async (req, res) => {
 		for (var i = 0; i < ipBlacklist.length; i++){
 			if (!ip.startsWith(ipBlacklist[i])) { continue; }
 			else {
-				if (useWwebjs) {
+				if (!debugMode) {
 					await client.sendMessage(chatId, "Client with ip " + ip + " was kicked from the server (country: " + geoip.lookup(ip).country + ")");
 					await client.markChatUnread(chatId);
 				}
@@ -141,7 +141,7 @@ app.get("/", async (req, res) => {
 		}
 
 		if (!through) {
-			if (useWwebjs) {
+			if (!debugMode) {
 				await client.sendMessage(chatId, "Client with ip " + ip + " was kicked from the server (country: " + geoip.lookup(ip).country + ")");
 				await client.markChatUnread(chatId);
 			}
@@ -152,7 +152,7 @@ app.get("/", async (req, res) => {
 
 	if (useNLOnly) {
 		if (geoip.lookup(ip).country != "NL") {
-			if (useWwebjs) {
+			if (!debugMode) {
 				await client.sendMessage(chatId, "Client with ip " + ip + " was kicked from the server (country: " + geoip.lookup(ip).country + ")");
 				await client.markChatUnread(chatId);
 			}
@@ -163,7 +163,7 @@ app.get("/", async (req, res) => {
 
 	if (closed) {
 		res.status(403).send("403 Forbidden" + `<br/>` + "Site Closed" + `<br/>` + new Date());
-		if (useWwebjs) {
+		if (!debugMode) {
 			await client.sendMessage(chatId, "Client with ip " + ip + " was kicked from the server (country: " + geoip.lookup(ip).country + ")");
 		}
 		return res.end();
@@ -187,7 +187,7 @@ var getClientIp = function(req) {
 	return ip;
 };
 
-if (useWwebjs) {
+if (!debugMode) {
 	// Generating QR-code for wwebjs
 	client.on("qr", qr => {
 	    qrcode.generate(qr, {small: true});
@@ -207,7 +207,7 @@ if (useWwebjs) {
 	client.initialize();
 }
 
-if (!useWwebjs) {
+if (debugMode) {
 	// Initializing server (without wwebjs running)
 	https.createServer(serverOptions, app).listen(port, () => {
 		console.log(`Server listening on port ${port}, with DNS https://itzlarz.dev`);

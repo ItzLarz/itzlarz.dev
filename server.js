@@ -33,7 +33,7 @@ const serverOptions = {
 
 // Declaring variables
 var port = process.env.PORT || 8080; // Port to create server on
-var chatId = fs.readFileSync("./whatsappChatID.txt", "utf8"); // Whatsapp Chat ID
+var chatId = fs.readFileSync("./whatsappChatID.txt", "utf8").toString().trim(); // Whatsapp Chat ID
 var closed = false; // Close site
 var debugMode = false; // Turning off wwebjs messaging for faster debugging
 var useBlacklist = false; // Use IP Blacklist
@@ -185,15 +185,15 @@ app.get("/gameOver", async (req, res) => {
 
 	if (!debugMode) {
 		if (result == "win") {
-			await client.sendMessage(chatId, "Alert: IP " + ip + " won the game with \n bombs = " + bombs + "\n rows = " + rows + "\n columns = " + columns);
+			await client.sendMessage(chatId, "Alert: IP " + ip + " won the game with \nbombs = " + bombs + "\nrows = " + rows + "\ncolumns = " + columns);
 		}
 		
 		else if (result == "defeat") {
-			await client.sendMessage(chatId, "Alert: IP " + ip + " lost the game with \n bombs = " + bombs + "\n rows = " + rows + "\n columns = " + columns);
+			await client.sendMessage(chatId, "Alert: IP " + ip + " lost the game with \nbombs = " + bombs + "\nrows = " + rows + "\ncolumns = " + columns);
 		}
 
 		else {
-			await client.sendMessage(chatId, "Error: IP " + ip + " got the value: \"" + result + "\"" + " with \n bombs = " + bombs + "\n rows = " + rows + "\n columns = " + columns);	
+			await client.sendMessage(chatId, "Error: IP " + ip + " got the value: \"" + result + "\"" + " with \nbombs = " + bombs + "\nrows = " + rows + "\ncolumns = " + columns);	
 		}
 
 		await client.markChatUnread(chatId);
@@ -201,15 +201,15 @@ app.get("/gameOver", async (req, res) => {
 
 	else if (debugMode) {
 		if (result == "win") {
-			console.log("Alert: IP " + ip + " won the game with \n bombs = " + bombs + "\n rows = " + rows + "\n columns = " + columns);
+			console.log("Alert: IP " + ip + " won the game with \nbombs = " + bombs + "\nrows = " + rows + "\ncolumns = " + columns);
 		}
 		
 		else if (result == "defeat") {
-			console.log("Alert: IP " + ip + " lost the game with \n bombs = " + bombs + "\n rows = " + rows + "\n columns = " + columns);
+			console.log("Alert: IP " + ip + " lost the game with \nbombs = " + bombs + "\nrows = " + rows + "\ncolumns = " + columns);
 		}
 
 		else {
-			console.log("Error: IP " + ip + " got the value: \"" + result + "\"" + " with \n bombs = " + bombs + "\n rows = " + rows + "\n columns = " + columns);	
+			console.log("Error: IP " + ip + " got the value: \"" + result + "\"" + " with \nbombs = " + bombs + "\nrows = " + rows + "\ncolumns = " + columns);	
 		}
 	}
 });

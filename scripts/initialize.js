@@ -115,7 +115,6 @@ function draw() {
       textSize(columns);
       strokeWeight(0);
       fill(200);
-      rect(edgeSize + (boxSize * columns) / 1.2, (topBorderSize + edgeSize) / 1.5, columns * 5, topBorderSize - topBorderSize / 1.55);
       fill(0);
 
       if (seconds >= 60) {

@@ -32,13 +32,13 @@ const serverOptions = {
 }
 
 // Declaring variables
-var port = process.env.PORT || 8080; // Port to create server on
+var port = process.env.PORT || 443; // Port to create server on
 var chatId = fs.readFileSync("./whatsappChatID.txt", "utf8").toString().trim(); // Whatsapp Chat ID
 var closed = false; // Close site
 var debugMode = false; // Turning off wwebjs messaging for faster debugging
 var useBlacklist = false; // Use IP Blacklist
 var useWhitelist = false; // Use IP Whitelist
-var useNLOnly = false; // Use NL IP only mode
+var useNLOnly = true; // Use NL IP only mode
 
 // IP Blacklist for server
 var ipBlacklist = [
@@ -48,7 +48,7 @@ var ipBlacklist = [
 // IP Whitelist for server
 var ipWhitelist = [
 	null,
-	"84.105.26.25"
+	"77.175.92.205"
 ];
 
 // Stating which directories to use
@@ -68,46 +68,48 @@ app.use((req, res, next) => {
 // Adding the IP-Adress to log and alerting host
 app.use(async (req, res, next) => {
 	var ip = getClientIp(req);
-	if (ip != "84.105.26.25"){
-		try {
-			var ipFile = fs.openSync("./IP-Log.txt", "r");
-	        var data = fs.readFileSync(ipFile, "utf8");
+	if (ip != "77.175.92.205"){
+		if (!ip.startsWith("192.168")){
+			try {
+				var ipFile = fs.openSync("./IP-Log.txt", "r");
+		        var data = fs.readFileSync(ipFile, "utf8");
 
-	   		if (data.includes(ip)) {
-	   			if (!debugMode) {
-		   			await client.sendMessage(chatId, "Client with ip " + ip + " accessed the server (old connection) (country: " + geoip.lookup(ip).country + ")");
-		   			await client.markChatUnread(chatId);
-	   			}
-	   		}
+		   		if (data.includes(ip)) {
+		   			if (!debugMode) {
+			   			await client.sendMessage(chatId, "Client with ip " + ip + " accessed the server (old connection) (country: " + geoip.lookup(ip).country + ")");
+			   			await client.markChatUnread(chatId);
+		   			}
+		   		}
 
-			else {
+				else {
+					if (!debugMode) {
+						await client.sendMessage(chatId, "Client with ip " + ip + " accessed the server (new connection) (country: " + geoip.lookup(ip).country + ")");
+						await client.markChatUnread(chatId);
+					}
+				}
+
+
+		       	fs.closeSync(ipFile);
+
+		  		ipFile = fs.openSync("./IP-Log.txt", "a");
+		  		fs.appendFileSync(ipFile, ip + " - " + new Date() + " - " + JSON.stringify(geoip.lookup(ip))  + "\n", "utf8");
+			}
+
+			catch(err) {
 				if (!debugMode) {
-					await client.sendMessage(chatId, "Client with ip " + ip + " accessed the server (new connection) (country: " + geoip.lookup(ip).country + ")");
+					await client.sendMessage(chatId, err);
 					await client.markChatUnread(chatId);
+				}
+
+				else {
+					console.log(err);
 				}
 			}
 
-
-	       	fs.closeSync(ipFile);
-
-	  		ipFile = fs.openSync("./IP-Log.txt", "a");
-	  		fs.appendFileSync(ipFile, ip + " - " + new Date() + " - " + JSON.stringify(geoip.lookup(ip))  + "\n", "utf8");
-		}
-
-		catch(err) {
-			if (!debugMode) {
-				await client.sendMessage(chatId, err);
-				await client.markChatUnread(chatId);
-			}
-
-			else {
-				console.log(err);
-			}
-		}
-
-		finally {
-			if (ipFile !== undefined) {
-				fs.closeSync(ipFile);
+			finally {
+				if (ipFile !== undefined) {
+					fs.closeSync(ipFile);
+				}
 			}
 		}
 	}
@@ -151,13 +153,15 @@ app.get("/", async (req, res) => {
 	}
 
 	if (useNLOnly) {
-		if (geoip.lookup(ip).country != "NL") {
-			if (!debugMode) {
-				await client.sendMessage(chatId, "Client with ip " + ip + " was kicked from the server (country: " + geoip.lookup(ip).country + ")");
-				await client.markChatUnread(chatId);
+		if (geoip.lookup(ip)){
+			if (geoip.lookup(ip).country != "NL") {
+				if (!debugMode) {
+					await client.sendMessage(chatId, "Client with ip " + ip + " was kicked from the server (country: " + geoip.lookup(ip).country + ")");
+					await client.markChatUnread(chatId);
+				}
+				res.status(403).send("403 Forbidden" + `<br/>` + "Only Dutch IP-Adresses permitted" + `<br/>` + new Date());
+				return res.end();
 			}
-			res.status(403).send("403 Forbidden" + `<br/>` + "Only dutch IP-Adresses permitted" + `<br/>` + new Date());
-			return res.end();
 		}
 	}
 
@@ -253,3 +257,41 @@ if (debugMode) {
 		console.log(`Server listening on port ${port}, with DNS https://itzlarz.dev`);
 	});
 }
+
+process.on('uncaughtException', async (err, origin) => {			
+	try {
+		var errorFile = fs.openSync("./Errors.txt","a");
+		fs.appendFileSync(errorFile,
+			new Date() +
+			"\nCaught exception: " + err + 
+			"Exception origin: "+ origin +
+			"\n \n \n \n \n"
+		);
+		
+	}
+
+	catch {
+		console.log("\nServer has crashed: ")
+		console.log(`Caught exception: ${err}`)
+		console.log(`Exception origin: ${origin}\n`)	
+	}
+
+	finally {
+		if (errorFile !== undefined) {
+			fs.closeSync(errorFile);
+		}
+
+		try {
+			await client.sendMessage(chatId, 
+				`Server has crashed.`
+				`Caught exception: ${err}`
+				`Exception origin: ${origin}\n`
+			);
+			
+		}
+
+		finally {
+			process.exit();
+		}
+	}
+});

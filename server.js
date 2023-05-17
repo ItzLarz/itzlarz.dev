@@ -159,10 +159,21 @@ app.get("/", async (req, res) => {
 	}
 
 	if (useNLOnly) {
-		if (geoip.lookup(ip)){
-			if (geoip.lookup(ip).country != "NL") {
+		if (!ip.startsWith("192.168")) {
+			if (geoip.lookup(ip)) {
+				if (geoip.lookup(ip).country != "NL") {
+					if (!debugMode) {
+						await client.sendMessage(chatId, "Client with ip " + ip + " was kicked from the server (country: " + geoip.lookup(ip).country + ")");
+						await client.markChatUnread(chatId);
+					}
+					res.status(403).send("403 Forbidden" + `<br/>` + "Only Dutch IP-Adresses permitted" + `<br/>` + new Date());
+					return res.end();
+				}
+			}
+
+			else {
 				if (!debugMode) {
-					await client.sendMessage(chatId, "Client with ip " + ip + " was kicked from the server (country: " + geoip.lookup(ip).country + ")");
+					await client.sendMessage(chatId, "Client with ip " + ip + " was kicked from the server (country: unknown)");
 					await client.markChatUnread(chatId);
 				}
 				res.status(403).send("403 Forbidden" + `<br/>` + "Only Dutch IP-Adresses permitted" + `<br/>` + new Date());
@@ -184,7 +195,7 @@ app.get("/", async (req, res) => {
 	}
 });
 
-// Send wwebjs message if
+// Send wwebjs message if Game Over
 app.get("/gameOver", async (req, res) => {
   var result = req.query.result;
   var bombs = req.query.bombs;
@@ -354,7 +365,6 @@ process.on('uncaughtException', async (err, origin) => {
 				`Caught exception: ${err}`
 				`Exception origin: ${origin}\n`
 			);
-			
 		}
 
 		finally {

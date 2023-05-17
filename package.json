@@ -1,21 +1,20 @@
 {
-  "name": "itzlarz.dev",
-  "version": "1.0.0",
-  "description": "Sourcecode of https://itzlarz.dev",
-  "main": "server.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "sudo \"$(which node)\" server.js"
-  },
-  "author": "ItzLarz",
-  "license": "GPL",
-  "dependencies": {
-    "express": "^4.17.3",
-    "geoip-lite": "^1.4.7",
-    "https": "^1.0.0",
-    "path": "^0.12.7",
-    "qrcode-terminal": "^0.12.0",
-    "whatsapp-web.js": "^1.19.5"
-  },
-  "keywords": []
+	"name": "itzlarz.dev",
+	"version": "1.0.0",
+	"description": "Sourcecode of https://itzlarz.dev",
+	"main": "server.js",
+	"scripts": {
+		"start": "sudo \"$(which node)\" server.js"
+	},
+	"author": "ItzLarz",
+	"license": "GPL-3.0",
+	"dependencies": {
+		"express": "^4.17.3",
+		"geoip-lite": "^1.4.7",
+		"https": "^1.0.0",
+		"path": "^0.12.7",
+		"qrcode-terminal": "^0.12.0",
+		"whatsapp-web.js": "^1.19.5"
+	},
+	"keywords": []
 }
